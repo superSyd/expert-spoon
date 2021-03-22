@@ -1,6 +1,13 @@
+const multer = require('multer');
 var express = require('express');
 var cors = require('cors');
 require('dotenv').config()
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 0  }
+  });
 
 var app = express();
 
@@ -11,7 +18,21 @@ app.get('/', function (req, res) {
     res.sendFile(process.cwd() + '/views/index.html');
 });
 
+app.post("/api/fileanalyse", upload.single("upfile"), (req,res,next)=>{
+  const file = req.file;
 
+  if(file){
+    
+    return res.send(file)
+    
+
+
+  } else {
+    const error = new Error("Please upload 0MB or empty file")
+     error.httpStatusCode = 400;
+    return next(error)
+  }
+})
 
 
 const port = process.env.PORT || 3000;
