@@ -6,7 +6,7 @@ require('dotenv').config()
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 0  }
+  limits: { fileSize: 1000000  }
   });
 
 var app = express();
@@ -23,12 +23,16 @@ app.post("/api/fileanalyse", upload.single("upfile"), (req,res,next)=>{
 
   if(file){
     
-    return res.send(file)
+    return res.json({
+      name: file.originalname,
+      type: file.mimetype,
+      size: file.size
+    })
     
 
 
   } else {
-    const error = new Error("Please upload 0MB or empty file")
+    const error = new Error("Please upload a file")
      error.httpStatusCode = 400;
     return next(error)
   }
